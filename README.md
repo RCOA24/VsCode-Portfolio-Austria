@@ -13,7 +13,6 @@ A modern, **VS Code–inspired portfolio** built with **React**, **Vite**, and *
 - 💻 **VS Code UI Style:** Sidebar, Activity Bar, Tabs, Editor, and Status Bar.  
 - 🖼️ **Portfolio Showcase:** Display your projects with smooth animations.  
 - 📱 **Responsive Design:** Works on desktop, tablet, and mobile screens.  
-- 🌗 **Dark & Light Themes:** Toggle themes dynamically like VS Code.  
 - ⚡ **Fast Refresh & HMR:** Powered by Vite for lightning-fast development.  
 - 🛠️ **Code Quality Tools:** ESLint and Prettier integrated for consistent code style.
 
@@ -21,15 +20,15 @@ A modern, **VS Code–inspired portfolio** built with **React**, **Vite**, and *
 
 ## 🧰 Tech Stack
 
-| Technology         | Description                                                  | Version |
-|-------------------|--------------------------------------------------------------|---------|
+| Technology         | Description                                                 | Version |
+|------------------- |-------------------------------------------------------------|---------|
 | **React**          | Frontend library for building interactive UIs               | 18.x    |
 | **Vite**           | Next-generation build tool and dev server                   | 5.x     |
 | **Tailwind CSS**   | Utility-first CSS framework for responsive, modern design   | 4.x     |
-| **React Icons**    | Provides VS Code–style icons for UI                          | latest  |
-| **ESLint**         | Linting utility to maintain code quality                     | latest  |
+| **React Icons**    | Provides VS Code–style icons for UI                         | latest  |
+| **ESLint**         | Linting utility to maintain code quality                    | latest  |
 | **Prettier**       | Code formatter to enforce consistent style                  | latest  |
-| **LocalStorage**   | Persist dark/light theme selection                           | N/A     |
+
 
 ---
 
@@ -39,3 +38,6 @@ A modern, **VS Code–inspired portfolio** built with **React**, **Vite**, and *
 ```bash
 git clone https://github.com/RCOA24/VsCode-Portfolio-Austria.git
 cd VsCode-Portfolio-Austria
+npm install
+npm run dev
+
