@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Menu } from "lucide-react"; // ✅ Lucide icon
+import { Menu } from "lucide-react"; // Lucide icon
 
 const menus = {
   File: ["New File", "Open File...", "Save", "Exit"],
@@ -15,7 +15,7 @@ export default function MenuBar({ toggleMobile }) {
   const [activeMenu, setActiveMenu] = useState(null);
   const menuRef = useRef(null);
 
-  // 🔹 Close menu on outside click
+  // Close menu on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -30,20 +30,20 @@ export default function MenuBar({ toggleMobile }) {
   return (
     <div
       ref={menuRef}
-      className="bg-[#2d2d30] h-[30px] flex items-center justify-between px-2 text-sm border-b border-[#3e3e42]"
+      className="bg-[#2d2d30] h-[30px] flex items-center justify-between px-2 text-sm border-b border-[#3e3e42] w-full z-50"
     >
-      {/* 🔹 Left side (Logo + Menus) */}
-      <div className="flex items-center">
+      {/* Left side (Logo + Menus) */}
+      <div className="flex items-center overflow-x-auto no-scrollbar">
         <img
           src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Visual_Studio_Code_1.35_icon.svg"
           alt="VS Code"
-          className="h-4 w-4 mr-3"
+          className="h-4 w-4 mr-2 flex-shrink-0"
         />
 
         {Object.keys(menus).map((item) => (
           <div
             key={item}
-            className={`px-3 py-1 cursor-pointer rounded hover:bg-[#3e3e42] relative ${
+            className={`px-2 py-1 cursor-pointer rounded hover:bg-[#3e3e42] relative flex-shrink-0 ${
               activeMenu === item ? "bg-[#3e3e42]" : ""
             }`}
             onClick={() => setActiveMenu(activeMenu === item ? null : item)}
@@ -52,7 +52,7 @@ export default function MenuBar({ toggleMobile }) {
 
             {/* Dropdown */}
             {activeMenu === item && (
-              <div className="absolute top-full left-0 bg-[#252526] border border-[#3e3e42] rounded shadow-md z-50">
+              <div className="absolute top-full left-0 bg-[#252526] border border-[#3e3e42] rounded shadow-md z-50 min-w-max">
                 {menus[item].map((subItem) => (
                   <div
                     key={subItem}
@@ -68,7 +68,7 @@ export default function MenuBar({ toggleMobile }) {
         ))}
       </div>
 
-      {/* 🔹 Right side (Mobile toggle) */}
+      {/* Right side (Mobile toggle) */}
       <div className="md:hidden cursor-pointer text-[#ccc]" onClick={toggleMobile}>
         <Menu size={18} />
       </div>

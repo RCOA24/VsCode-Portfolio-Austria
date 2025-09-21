@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaFolder, FaSearch, FaBug } from "react-icons/fa"; // Removed FaCog
+import { FaFolder, FaSearch, FaBug } from "react-icons/fa";
 
 export default function ActivityBar() {
   const icons = [

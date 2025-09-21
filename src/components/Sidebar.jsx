@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { images } from "../data/files";
+import { SiHtml5, SiTailwindcss, SiJavascript } from "react-icons/si";
 
 export default function Sidebar({
   activeFile,
@@ -14,35 +15,26 @@ export default function Sidebar({
 }) {
   const [certsOpen, setCertsOpen] = useState(true);
 
-  // ✅ File open handler
   const openFile = (file, type) => {
     if (!openTabs.find((t) => t.file === file)) {
       setOpenTabs([...openTabs, { file, type }]);
     }
     setActiveFile({ file, type });
 
-    // ✅ Auto-close on mobile
-    if (window.innerWidth < 768) {
-      setIsMobileOpen(false);
-    }
+    if (window.innerWidth < 768) setIsMobileOpen(false); // Auto-close on mobile
   };
 
-  // ✅ Highlight checker (blue active state like VS Code)
   const isActive = (file) =>
     activeFile?.file === file
       ? "bg-[#094771] border-l-2 border-[#007ACC] text-white"
       : "text-gray-300";
 
-  // ✅ Sidebar resize
   const handleMouseDown = (e) => {
     const startX = e.clientX;
     const startWidth = sidebarWidth;
 
     const handleMouseMove = (e) => {
-      const newWidth = Math.min(
-        500,
-        Math.max(150, startWidth + (e.clientX - startX))
-      );
+      const newWidth = Math.min(500, Math.max(150, startWidth + (e.clientX - startX)));
       setSidebarWidth(newWidth);
     };
 
@@ -55,46 +47,49 @@ export default function Sidebar({
     window.addEventListener("mouseup", handleMouseUp);
   };
 
+  const files = [
+    { file: "Home", icon: <SiHtml5 className="text-red-500" />, type: "section", ext: "html" },
+    { file: "About", icon: <SiTailwindcss className="text-sky-400" />, type: "section", ext: "css" },
+    { file: "Projects", icon: <SiJavascript className="text-yellow-400" />, type: "section", ext: "js" },
+  ];
+
   return (
     <div
-      className={`bg-[#252526] border-r border-[#3e3e42] flex flex-col absolute md:static top-0 left-0 h-full transition-transform duration-300 z-50 ${
-        isMobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-      }`}
-      style={{ width: sidebarWidth }}
+      className={`
+        bg-[#252526] border-r border-[#3e3e42] flex flex-col fixed md:static top-0 left-0 h-full z-50
+        transform transition-transform duration-300 ease-in-out
+        ${isMobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+      `}
+      style={{ width: sidebarWidth, minWidth: 150, maxWidth: 500 }}
     >
-      {/* Sidebar header */}
-      <div className="p-2 text-xs font-bold uppercase text-gray-300">
+      {/* Header */}
+      <div className="p-2 text-xs font-bold uppercase text-gray-300 flex-shrink-0">
         Explorer
       </div>
 
-      {/* File tree */}
-      <div className="flex-1 overflow-y-auto text-sm">
-        {[
-          { file: "Home", icon: "🏠", type: "section", ext: "html" },
-          { file: "About", icon: "👤", type: "section", ext: "css" },
-          { file: "Projects", icon: "💼", type: "section", ext: "js" },
-        ].map(({ file, icon, type, ext }) => (
+      {/* File List */}
+      <div className="flex-1 overflow-y-auto text-sm flex flex-col min-h-0">
+        {files.map(({ file, icon, type, ext }) => (
           <div
             key={file}
-            className={`p-2 cursor-pointer hover:bg-[#2a2d2e] flex items-center ${isActive(
-              file
-            )}`}
+            className={`p-2 cursor-pointer hover:bg-[#2a2d2e] flex items-center truncate ${isActive(file)}`}
             onClick={() => openFile(file, type)}
           >
-            <span className="mr-2">{icon}</span> {file}.{ext}
+            <span className="mr-2 flex-shrink-0">{icon}</span>
+            <span className="truncate">{file}.{ext}</span>
           </div>
         ))}
 
-        {/* Certificates folder */}
+        {/* Certificates Folder */}
         <div
-          className="p-2 font-semibold text-gray-400 flex items-center cursor-pointer hover:bg-[#2a2d2e]"
+          className="p-2 font-semibold text-gray-400 flex items-center cursor-pointer hover:bg-[#2a2d2e] select-none"
           onClick={() => setCertsOpen(!certsOpen)}
         >
-          <span className="mr-2">{certsOpen ? "📂" : "📁"}</span>
-          Certificates
+          <span className="mr-2 flex-shrink-0">{certsOpen ? "📂" : "📁"}</span>
+          <span className="truncate">Certificates</span>
         </div>
 
-        {/* Certificate files */}
+        {/* Certificate Images */}
         <div
           className={`overflow-hidden transition-all duration-300 ease-in-out ${
             certsOpen ? "max-h-[500px]" : "max-h-0"
@@ -103,21 +98,20 @@ export default function Sidebar({
           {Object.keys(images).map((img) => (
             <div
               key={img}
-              className={`pl-6 p-2 cursor-pointer hover:bg-[#2a2d2e] flex items-center ${isActive(
-                img
-              )}`}
+              className={`pl-6 p-2 cursor-pointer hover:bg-[#2a2d2e] flex items-center truncate ${isActive(img)}`}
               onClick={() => {
                 setLightboxImg(images[img]);
                 openFile(img, "img");
               }}
             >
-              <span className="mr-2">🖼️</span> {img}
+              <span className="mr-2 flex-shrink-0">🖼️</span>
+              <span className="truncate">{img}</span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Resizer (desktop only) */}
+      {/* Resize handle (only desktop) */}
       <div
         className="hidden md:block w-[5px] bg-[#2d2d30] cursor-col-resize absolute right-0 top-0 h-full"
         onMouseDown={handleMouseDown}
