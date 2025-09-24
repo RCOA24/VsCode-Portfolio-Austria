@@ -11,7 +11,14 @@ export default function ActivityBar() {
   const [active, setActive] = useState(0);
 
   return (
-    <div className="w-[50px] bg-gray-800 dark:bg-[#1e1e1e] flex flex-col items-center pt-2 relative">
+    <div
+      className={`
+        w-[50px] bg-gray-800 dark:bg-[#1e1e1e] 
+        flex flex-col items-center pt-2 relative
+        h-full
+        border-r border-[#3e3e42] md:border-r-0
+      `}
+    >
       {icons.map((item, i) => (
         <div
           key={i}

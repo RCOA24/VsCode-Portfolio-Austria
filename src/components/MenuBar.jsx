@@ -22,7 +22,6 @@ export default function MenuBar({ toggleMobile }) {
         setActiveMenu(null);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -30,10 +29,10 @@ export default function MenuBar({ toggleMobile }) {
   return (
     <div
       ref={menuRef}
-      className="bg-[#2d2d30] h-[30px] flex items-center justify-between px-2 text-sm border-b border-[#3e3e42] w-full z-50"
+      className="bg-[#2d2d30] h-[30px] flex items-center justify-between px-2 text-sm border-b border-[#3e3e42] w-full z-50 relative"
     >
       {/* Left side (Logo + Menus) */}
-      <div className="flex items-center overflow-x-auto no-scrollbar">
+      <div className="flex items-center">
         <img
           src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Visual_Studio_Code_1.35_icon.svg"
           alt="VS Code"
@@ -43,16 +42,16 @@ export default function MenuBar({ toggleMobile }) {
         {Object.keys(menus).map((item) => (
           <div
             key={item}
-            className={`px-2 py-1 cursor-pointer rounded hover:bg-[#3e3e42] relative flex-shrink-0 ${
+            className={`px-2 py-1 cursor-pointer rounded hover:bg-[#3e3e42] relative ${
               activeMenu === item ? "bg-[#3e3e42]" : ""
             }`}
             onClick={() => setActiveMenu(activeMenu === item ? null : item)}
           >
             {item}
 
-            {/* Dropdown */}
+            {/* Dropdown (absolute overlay, not pushing content) */}
             {activeMenu === item && (
-              <div className="absolute top-full left-0 bg-[#252526] border border-[#3e3e42] rounded shadow-md z-50 min-w-max">
+              <div className="absolute top-full left-0 bg-[#252526] border border-[#3e3e42] rounded shadow-lg z-50 min-w-max animate-fadeIn">
                 {menus[item].map((subItem) => (
                   <div
                     key={subItem}
@@ -69,7 +68,10 @@ export default function MenuBar({ toggleMobile }) {
       </div>
 
       {/* Right side (Mobile toggle) */}
-      <div className="md:hidden cursor-pointer text-[#ccc]" onClick={toggleMobile}>
+      <div
+        className="md:hidden cursor-pointer text-[#ccc]"
+        onClick={toggleMobile}
+      >
         <Menu size={18} />
       </div>
     </div>
