@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { images } from "../data/files";
+import { images } from "../data/images";
 import { SiHtml5, SiTailwindcss, SiJavascript } from "react-icons/si";
 
 export default function Sidebar({
