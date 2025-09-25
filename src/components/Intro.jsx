@@ -297,7 +297,7 @@ export default function Intro({ onComplete }) {
                 {/* Terminal */}
                 <div 
                   ref={terminalRef}
-                  className="bg-black p-4 h-38 font-mono text-sm border-t border-gray-600"
+                  className="bg-black p-4 h-44 font-mono text-sm border-t border-gray-600"
                 >
                   <div className="terminal-line text-green-400 mb-1">
                   <span className="text-white">➜</span>  <span className="text-blue-400">PS S:\VSCodeProjects\vscode-portfolio-austria</span> npm run dev
@@ -308,6 +308,7 @@ export default function Intro({ onComplete }) {
                   <div className="terminal-line text-white mb-1">
                    ➜ vite
                   </div>
+                  <br></br>
                   <div className="terminal-line text-green-400 mb-1 ml-4">
                    VITE v7.1.6 <span className="text-gray-400">ready in</span> <span className="text-white">304 ms</span>
                   </div>
