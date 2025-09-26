@@ -350,18 +350,7 @@ export const Projects = () => {
       img: "https://via.placeholder.com/250x150.png?text=TyphoGuard",
       tech: ["Laravel", "Leaflet.js", "Tailwind CSS"],
     },
-    {
-      title: "CRM System 🗂️",
-      desc: "Team-built CRM with Laravel & Blade. Responsive and API-integrated.",
-      img: "https://via.placeholder.com/250x150.png?text=CRM",
-      tech: ["Laravel", "Blade", "REST API"],
-    },
-    {
-      title: "Portfolio 🚀",
-      desc: "VS Code-inspired portfolio using React & Tailwind.",
-      img: "https://via.placeholder.com/250x150.png?text=Portfolio",
-      tech: ["React", "Tailwind", "GSAP"],
-    },
+    
   ];
 
   return (
