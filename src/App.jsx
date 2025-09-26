@@ -95,6 +95,7 @@ function App() {
               />
               <Editor
                 activeFile={activeFile}
+                onFileChange={setActiveFile}
                 openTabs={openTabs}
                 setOpenTabs={setOpenTabs}
               />

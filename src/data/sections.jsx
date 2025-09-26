@@ -1,305 +1,307 @@
-import { useEffect, useRef, useState } from "react";
+// src/data/sections.jsx
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
 
-export const Home = () => {
+// ================== HOME ==================
+export const Home = ({ onNavigateToAbout }) => {
   const container = useRef(null);
-  const textRef = useRef(null);
-  const [currentRole, setCurrentRole] = useState(0);
-  
-  const roles = ["Web Developer", "Problem Solver", "Code Architect", "Digital Creator"];
+  const orbs = useRef([]);
+  const icons = useRef([]);
 
   useEffect(() => {
-    // Keep your original GSAP-style animation approach
-    if (container.current?.children) {
-      Array.from(container.current.children).forEach((element, index) => {
-        element.style.transform = "translateY(40px)";
-        element.style.opacity = "0";
-        element.style.animation = `slideUp 0.8s ease-out ${index * 0.2}s forwards`;
+    // Add delay to ensure DOM is ready
+    const timer = setTimeout(() => {
+      // Fade-in animation for content (excluding the CTA button)
+      if (container.current && container.current.children.length > 0) {
+        const children = Array.from(container.current.children);
+        const ctaButton = children.find(child => child.tagName === 'BUTTON');
+        const otherChildren = children.filter(child => child.tagName !== 'BUTTON');
+        
+        // Animate other children with stagger
+        gsap.fromTo(
+          otherChildren,
+          { y: 40, opacity: 0 },
+          { 
+            y: 0, 
+            opacity: 1, 
+            stagger: 0.2, 
+            duration: 0.8, 
+            ease: "power3.out"
+          }
+        );
+        
+        // Show CTA button immediately without animation
+        if (ctaButton) {
+          gsap.set(ctaButton, { opacity: 1, y: 0 });
+        }
+      }
+
+      // Floating animation for background orbs
+      const validOrbs = orbs.current.filter(Boolean);
+      validOrbs.forEach((orb, i) => {
+        if (orb) {
+          gsap.to(orb, {
+            y: "+=40",
+            x: i % 2 === 0 ? "+=30" : "-=30",
+            duration: 6 + i,
+            ease: "sine.inOut",
+            yoyo: true,
+            repeat: -1,
+          });
+        }
       });
-    }
 
-    // Rotating roles animation
-    const roleInterval = setInterval(() => {
-      setCurrentRole((prev) => (prev + 1) % roles.length);
-    }, 3000);
+      // Floating animation for tech icons
+      const validIcons = icons.current.filter(Boolean);
+      validIcons.forEach((icon, i) => {
+        if (icon) {
+          // Initial positioning animation
+          gsap.fromTo(
+            icon,
+            { 
+              opacity: 0, 
+              scale: 0,
+              rotation: -180 
+            },
+            { 
+              opacity: 0.8, 
+              scale: 1,
+              rotation: 0,
+              duration: 1,
+              delay: i * 0.1,
+              ease: "back.out(1.7)"
+            }
+          );
 
-    return () => clearInterval(roleInterval);
+          // Continuous floating animation
+          gsap.to(icon, {
+            y: `+=${Math.random() * 60 + 20}`,
+            x: `+=${Math.random() * 40 - 20}`,
+            rotation: `+=${Math.random() * 360}`,
+            duration: 8 + Math.random() * 4,
+            ease: "sine.inOut",
+            yoyo: true,
+            repeat: -1,
+            delay: Math.random() * 2,
+          });
+
+          // Subtle pulsing effect
+          gsap.to(icon, {
+            scale: 1.1,
+            duration: 3 + Math.random() * 2,
+            ease: "power2.inOut",
+            yoyo: true,
+            repeat: -1,
+            delay: Math.random() * 3,
+          });
+        }
+      });
+    }, 100);
+    
+    return () => clearTimeout(timer);
   }, []);
 
-  useEffect(() => {
-    // Animate role change
-    if (textRef.current) {
-      textRef.current.style.animation = "none";
-      setTimeout(() => {
-        textRef.current.style.animation = "fadeInScale 0.6s ease-out";
-      }, 50);
+  // Tech stack icons data with real logos - scattered positions
+  const techIcons = [
+    { 
+      name: "HTML5", 
+      logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg", 
+      position: { top: "8%", left: "12%" } 
+    },
+    { 
+      name: "CSS3", 
+      logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg", 
+      position: { top: "18%", right: "8%" } 
+    },
+    { 
+      name: "Tailwind CSS", 
+      logo: "https://img.icons8.com/?size=100&id=x7XMNGh2vdqA&format=png&color=000000", 
+      position: { top: "35%", left: "5%" } 
+    },
+    { 
+      name: "JavaScript", 
+      logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg", 
+      position: { top: "65%", right: "15%" } 
+    },
+    { 
+      name: "Java", 
+      logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg", 
+      position: { top: "12%", left: "78%" } 
+    },
+    { 
+      name: "C#", 
+      logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg", 
+      position: { top: "75%", left: "10%" } 
+    },
+    { 
+      name: "React", 
+      logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg", 
+      position: { top: "28%", right: "5%" } 
+    },
+    { 
+      name: "PHP", 
+      logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg", 
+      position: { top: "45%", left: "88%" } 
+    },
+    { 
+      name: "Laravel", 
+      logo: "https://laravel.com/img/logomark.min.svg", 
+      position: { top: "85%", right: "25%" } 
+    },
+    { 
+      name: "MySQL", 
+      logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg", 
+      position: { top: "5%", right: "35%" } 
+    },
+   
+    { 
+      name: "Git", 
+      logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg", 
+      position: { top: "42%", right: "25%" } 
+    },
+    
+    
+   
+    { 
+      name: "Bootstrap", 
+      logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bootstrap/bootstrap-original.svg", 
+      position: { top: "15%", left: "45%" } 
+    },
+  ];
+
+  const handleExploreProjects = () => {
+    if (onNavigateToAbout) {
+      onNavigateToAbout();
     }
-  }, [currentRole]);
+  };
 
   return (
-    <div ref={container} className="relative h-screen w-full overflow-hidden bg-gradient-to-br from-gray-900/50 via-gray-800/50 to-gray-900/50">
-      <style>{`
-        @keyframes slideUp {
-          to {
-            transform: translateY(0);
-            opacity: 1;
-          }
-        }
-        
-        @keyframes fadeInScale {
-          0% { opacity: 0; transform: scale(0.9); }
-          100% { opacity: 1; transform: scale(1); }
-        }
-        
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-8px); }
-        }
-        
-        @keyframes glow {
-          0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
-          50% { box-shadow: 0 0 35px rgba(59, 130, 246, 0.5); }
-        }
-        
-        .floating { animation: float 5s ease-in-out infinite; }
-        .glow-pulse { animation: glow 3s ease-in-out infinite; }
-        .text-glow { text-shadow: 0 0 20px rgba(59, 130, 246, 0.6); }
-        
-        .gradient-border {
-          background: linear-gradient(135deg, #1a1a2e, #16213e);
-          border-radius: 1rem;
-          padding: 3px;
-          position: relative;
-        }
-        
-        .gradient-border::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          padding: 3px;
-          background: linear-gradient(135deg, #3b82f6, #8b5cf6, #06b6d4, #10b981);
-          border-radius: inherit;
-          mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-          mask-composite: exclude;
-          opacity: 0.9;
-        }
-        
-        .glassmorphism {
-          background: rgba(30, 30, 30, 0.8);
-          backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        /* Mobile-first responsive design */
-        .home-container {
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          margin: -0.5rem;
-          padding: 1rem;
-        }
-        
-        /* Responsive adjustments */
-        @media (min-width: 640px) {
-          .home-container {
-            margin: -1rem;
-            padding: 1.25rem;
-          }
-        }
-        
-        @media (min-width: 1024px) {
-          .home-container {
-            margin: -1.5rem;
-            padding: 1.5rem;
-          }
-        }
+    <div className="relative w-full h-full flex flex-col items-center justify-center text-center px-6 overflow-hidden">
+      {/* Animated gradient orbs background - positioned relative to this container */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div
+          ref={(el) => (orbs.current[0] = el)}
+          className="absolute w-[200px] h-[200px] md:w-[300px] md:h-[300px] bg-blue-500/20 rounded-full blur-3xl top-10 left-10"
+        ></div>
+        <div
+          ref={(el) => (orbs.current[1] = el)}
+          className="absolute w-[150px] h-[150px] md:w-[250px] md:h-[250px] bg-purple-500/20 rounded-full blur-3xl bottom-20 right-10"
+        ></div>
+        <div
+          ref={(el) => (orbs.current[2] = el)}
+          className="absolute w-[120px] h-[120px] md:w-[200px] md:h-[200px] bg-teal-400/20 rounded-full blur-3xl bottom-10 left-1/2 transform -translate-x-1/2"
+        ></div>
+      </div>
 
-        /* Mobile text scaling */
-        @media (max-width: 390px) {
-          .mobile-text-xs { font-size: 0.7rem; }
-          .mobile-text-sm { font-size: 0.8rem; }
-          .mobile-text-base { font-size: 0.9rem; }
-          .mobile-text-lg { font-size: 1rem; }
-          .mobile-text-xl { font-size: 1.1rem; }
-          .mobile-text-2xl { font-size: 1.3rem; }
-        }
-        
-        /* Enhanced mobile interactions */
-        @media (max-width: 768px) {
-          .mobile-touch-target {
-            min-height: 44px;
-            min-width: 44px;
-          }
-          
-          .mobile-spacing {
-            margin: 0.75rem 0;
-          }
-        }
-      `}</style>
-      
-      {/* Full-page background overlay */}
-      <div className="home-container">
-        {/* Background Effects - Responsive sizes */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {/* Mobile: Smaller, fewer background elements */}
-          <div className="absolute top-4 right-4 sm:top-8 lg:top-12 sm:right-8 lg:right-12 w-16 sm:w-24 lg:w-32 h-16 sm:h-24 lg:h-32 bg-blue-500/10 rounded-full blur-xl sm:blur-2xl lg:blur-3xl floating"></div>
-          <div className="absolute bottom-4 left-4 sm:bottom-8 lg:bottom-12 sm:left-8 lg:left-12 w-20 sm:w-28 lg:w-36 h-20 sm:h-28 lg:h-36 bg-purple-500/10 rounded-full blur-xl sm:blur-2xl lg:blur-3xl floating" style={{animationDelay: '-2s'}}></div>
-          <div className="hidden sm:block absolute top-1/2 left-1/3 w-16 sm:w-20 lg:w-24 h-16 sm:h-20 lg:h-24 bg-teal-500/10 rounded-full blur-xl sm:blur-2xl floating" style={{animationDelay: '-3s'}}></div>
-          <div className="hidden lg:block absolute top-1/4 right-1/4 w-20 h-20 bg-green-500/10 rounded-full blur-2xl floating" style={{animationDelay: '-4s'}}></div>
-        </div>
-
-        {/* Main Content - Fully responsive */}
-        <div className="relative z-10 h-full flex items-center justify-center py-4 sm:py-6 lg:py-8">
-          <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-12 items-center h-full">
-              
-              {/* Image Section - Mobile first, desktop second */}
-              <div className="flex justify-center order-1 lg:order-2 mb-4 lg:mb-0">
-                <div className="relative group w-full max-w-[280px] xs:max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-teal-500/20 to-purple-500/20 rounded-xl sm:rounded-2xl blur-xl sm:blur-2xl group-hover:blur-lg sm:group-hover:blur-xl transition-all duration-300"></div>
-                  
-                  <div className="relative glassmorphism rounded-xl sm:rounded-2xl p-2 sm:p-3 lg:p-4 xl:p-6 transition-transform hover:scale-105 hover:-translate-y-2 duration-300">
-                    <img
-                      src="https://i.pinimg.com/originals/81/17/8b/81178b47a8598f0c81c4799f2cdd4057.gif"
-                      alt="Young Developer Animation"
-                      className="w-full h-auto rounded-lg sm:rounded-xl shadow-2xl"
-                      style={{ 
-                        maxHeight: '240px', 
-                        minHeight: '160px',
-                        objectFit: 'cover'
-                      }}
-                      loading="lazy"
-                    />
-                    
-                    {/* Floating Tech Badges - Responsive positioning and sizing */}
-                    <div className="absolute -top-2 -left-2 sm:-top-3 lg:-top-4 sm:-left-3 lg:-left-4 glassmorphism rounded-md sm:rounded-lg px-1.5 py-1 sm:px-2 lg:px-3 sm:py-1.5 lg:py-2 text-xs sm:text-sm text-green-400 font-mono floating shadow-lg sm:shadow-xl mobile-touch-target">
-                      <span className="text-glow font-bold">React</span>
-                    </div>
-                    <div className="absolute -top-2 -right-2 sm:-top-3 lg:-top-4 sm:-right-3 lg:-right-4 glassmorphism rounded-md sm:rounded-lg px-1.5 py-1 sm:px-2 lg:px-3 sm:py-1.5 lg:py-2 text-xs sm:text-sm text-blue-400 font-mono floating shadow-lg sm:shadow-xl mobile-touch-target" style={{animationDelay: '-1s'}}>
-                      <span className="text-glow font-bold">JS</span>
-                    </div>
-                    <div className="absolute -bottom-2 -left-2 sm:-bottom-3 lg:-bottom-4 sm:-left-3 lg:-left-4 glassmorphism rounded-md sm:rounded-lg px-1.5 py-1 sm:px-2 lg:px-3 sm:py-1.5 lg:py-2 text-xs sm:text-sm text-purple-400 font-mono floating shadow-lg sm:shadow-xl mobile-touch-target" style={{animationDelay: '-2s'}}>
-                      <span className="text-glow font-bold">CSS</span>
-                    </div>
-                    <div className="absolute -bottom-2 -right-2 sm:-bottom-3 lg:-bottom-4 sm:-right-3 lg:-right-4 glassmorphism rounded-md sm:rounded-lg px-1.5 py-1 sm:px-2 lg:px-3 sm:py-1.5 lg:py-2 text-xs sm:text-sm text-teal-400 font-mono floating shadow-lg sm:shadow-xl mobile-touch-target" style={{animationDelay: '-3s'}}>
-                      <span className="text-glow font-bold">Node</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Content Section - Mobile optimized */}
-              <div className="space-y-3 sm:space-y-4 lg:space-y-6 text-center lg:text-left order-2 lg:order-1 px-2 sm:px-0">
-                {/* Greeting */}
-                <div className="space-y-1 sm:space-y-2 lg:space-y-3">
-                  <div className="inline-block">
-                    <span className="text-xs sm:text-sm text-gray-400 font-mono tracking-wider uppercase mobile-text-xs">
-                      Hello World, I'm
-                    </span>
-                  </div>
-                  <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black leading-tight mobile-text-2xl">
-                    <span className="text-gray-100">Rodney</span>
-                    <br />
-                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-teal-400 to-purple-500 text-glow">
-                      Charles
-                    </span>
-                  </h1>
-                  <p className="text-sm sm:text-base lg:text-lg xl:text-xl text-gray-400 font-light tracking-wide mobile-text-sm">
-                    Full Stack Developer 
-                  </p>
-                </div>
-
-                {/* Dynamic Role */}
-                <div className="flex justify-center lg:justify-start mobile-spacing">
-                  <div className="gradient-border glow-pulse transition-transform hover:scale-105 shadow-lg sm:shadow-xl mobile-touch-target">
-                    <div className="glassmorphism rounded-lg sm:rounded-xl px-3 py-2 sm:px-4 lg:px-6 sm:py-2.5 lg:py-3">
-                      <div className="flex items-center gap-2 lg:gap-3">
-                        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-400 rounded-full animate-pulse shadow-lg"></div>
-                        <h2 
-                          ref={textRef}
-                          className="text-sm xs:text-base sm:text-lg lg:text-xl xl:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-teal-400 mobile-text-base"
-                        >
-                          {roles[currentRole]}
-                        </h2>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Pitch */}
-                <div className="space-y-2 sm:space-y-3 mobile-spacing">
-                  <p className="text-sm xs:text-base sm:text-lg lg:text-xl xl:text-2xl text-gray-300 leading-relaxed mobile-text-base">
-                    I craft 
-                    <span className="text-blue-400 font-semibold text-glow"> digital experiences </span>
-                    that solve
-                  </p>
-                  <p className="text-lg xs:text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-blue-400 to-purple-500 leading-tight mobile-text-xl">
-                    real-world problems
-                  </p>
-                  <p className="text-xs xs:text-sm sm:text-base lg:text-lg text-gray-400 max-w-2xl lg:mx-0 mx-auto leading-relaxed px-2 sm:px-4 lg:px-0 mobile-text-sm">
-                    Transforming complex challenges into elegant solutions through 
-                    <span className="text-teal-400 font-semibold"> clean code</span>, 
-                    <span className="text-blue-400 font-semibold"> modern design</span>, and 
-                    <span className="text-purple-400 font-semibold"> innovative thinking</span>.
-                  </p>
-                </div>
-
-                {/* Buttons - Enhanced mobile interaction */}
-                <div className="flex flex-col sm:flex-row gap-3 lg:gap-4 justify-center lg:justify-start pt-3 sm:pt-4 lg:pt-6 px-2 sm:px-4 lg:px-0 mobile-spacing">
-                  <button className="group relative px-4 sm:px-6 py-3 lg:px-8 lg:py-4 bg-gradient-to-r from-blue-500 via-teal-500 to-purple-600 rounded-lg sm:rounded-xl font-bold text-white shadow-xl sm:shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 hover:scale-105 overflow-hidden mobile-touch-target">
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-teal-600 to-purple-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <span className="relative flex items-center justify-center gap-2 lg:gap-3 text-sm sm:text-base lg:text-lg mobile-text-base">
-                      <span>Explore My Work</span>
-                      <span className="text-base sm:text-lg lg:text-xl group-hover:translate-x-1 transition-transform duration-300">🚀</span>
-                    </span>
-                  </button>
-                </div>
-              </div>
+      {/* Floating Tech Icons - higher z-index */}
+      <div className="absolute inset-0 pointer-events-none z-10">
+        {techIcons.map((tech, index) => (
+          <div
+            key={tech.name}
+            ref={(el) => (icons.current[index] = el)}
+            className="absolute opacity-0 select-none will-change-transform"
+            style={{
+              top: tech.position.top,
+              left: tech.position.left,
+              right: tech.position.right,
+            }}
+            title={tech.name}
+          >
+            <div className="relative flex items-center justify-center w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12">
+              <img 
+                src={tech.logo} 
+                alt={tech.name}
+                className="w-full h-full object-contain filter drop-shadow-lg"
+                style={{
+                  filter: 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.3))'
+                }}
+              />
             </div>
           </div>
-        </div>
+        ))}
+      </div>
 
-        {/* Decorative Code Elements - Responsive positioning */}
-        <div className="absolute top-2 left-2 sm:top-4 sm:left-4 opacity-30 floating">
-          <div className="glassmorphism rounded-md sm:rounded-lg px-2 py-1 sm:px-3 sm:py-2 text-xs text-green-400 font-mono shadow-lg sm:shadow-xl mobile-touch-target">
-            <span className="text-glow font-bold">&lt;developer/&gt;</span>
-          </div>
+      <div ref={container} className="space-y-6 max-w-3xl relative z-20 my-auto">
+        {/* Developer GIF */}
+        <div className="flex justify-center mb-6">
+          <img
+            src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExNnl4Nm9xcW1ydHdmbXY0aHQ3eTczYjYyMmQ5cXdkNmZ0eXk4c3o0MSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xUA7bdpLxQhsSQdyog/giphy.gif"
+            alt="Developer Animation"
+            className="w-40 md:w-56 lg:w-64 drop-shadow-xl rounded-lg"
+          />
         </div>
         
-        <div className="absolute bottom-2 right-2 sm:bottom-4 sm:right-4 opacity-30 floating" style={{animationDelay: '-2s'}}>
-          <div className="glassmorphism rounded-md sm:rounded-lg px-2 py-1 sm:px-3 sm:py-2 text-xs text-blue-400 font-mono shadow-lg sm:shadow-xl mobile-touch-target">
-            <span className="text-glow font-bold">{`{ code: "life" }`}</span>
-          </div>
-        </div>
-
-        <div className="hidden sm:block absolute top-1/4 left-2 sm:left-4 opacity-20 floating" style={{animationDelay: '-4s'}}>
-          <div className="glassmorphism rounded-md sm:rounded-lg px-2 py-1 sm:px-3 sm:py-2 text-xs text-purple-400 font-mono shadow-lg mobile-touch-target">
-            <span className="text-glow font-bold">npm start</span>
-          </div>
-        </div>
+        {/* Name */}
+        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-teal-400 to-purple-500">
+          Rodney Charles O. Austria
+        </h1>
+        
+        {/* Role */}
+        <p className="text-gray-300 text-base md:text-lg lg:text-xl">
+          <span className="font-semibold text-purple-400">Web Developer</span>
+        </p>
+        
+        {/* Tagline */}
+        <p className="text-gray-400 text-sm md:text-base lg:text-lg max-w-xl mx-auto leading-relaxed">
+          I create <span className="text-teal-400 font-medium">solutions</span> for
+          real-world problems with clean code and modern design.
+        </p>
+        
+        {/* CTA Button */}
+        <button 
+          onClick={handleExploreProjects}
+          className="mt-8 inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-75 cursor-pointer group"
+        >
+          <svg 
+            className="w-4 h-4 transition-transform duration-75 group-hover:scale-110" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+          <span>Learn More About Me</span>
+        </button>
       </div>
     </div>
   );
 };
 
 // ================== ABOUT ==================
-export const About = () => {
+export const About = ({ onNavigateToProjects }) => {
   const container = useRef(null);
+  
+  const handleExploreProjects = () => {
+    if (onNavigateToProjects) {
+      onNavigateToProjects();
+    }
+  };
 
   useEffect(() => {
-    gsap.fromTo(
-      container.current.children,
-      { x: -50, opacity: 0 },
-      { x: 0, opacity: 1, stagger: 0.2, duration: 0.8, ease: "power2.out" }
-    );
+    if (container.current && container.current.children.length > 0) {
+      const children = Array.from(container.current.children);
+      const ctaButton = children.find(child => child.tagName === 'BUTTON');
+      const otherChildren = children.filter(child => child.tagName !== 'BUTTON');
+      
+      // Animate other children with stagger
+      gsap.fromTo(
+        otherChildren,
+        { x: -50, opacity: 0 },
+        { x: 0, opacity: 1, stagger: 0.2, duration: 0.8, ease: "power2.out" }
+      );
+      
+      // Show CTA button immediately without animation
+      if (ctaButton) {
+        gsap.set(ctaButton, { opacity: 1, x: 0 });
+      }
+    }
   }, []);
 
   return (
     <div ref={container} className="max-w-3xl mx-auto text-center space-y-6 p-6">
       <h1 className="text-3xl md:text-4xl font-bold text-blue-400">About Me</h1>
       <p className="text-gray-300 leading-relaxed text-lg">
-        I’m <span className="font-semibold text-teal-400">Rodney Austria</span>, a{" "}
+        I'm <span className="font-semibold text-teal-400">Rodney Austria</span>, a{" "}
         <span className="text-purple-400">Full-Stack Developer</span> passionate about building
         responsive, modern web apps with clean UI/UX and seamless integrations.
       </p>
@@ -309,6 +311,22 @@ export const About = () => {
         <span className="px-4 py-2 rounded-lg bg-[#252526] text-purple-300">Tailwind CSS</span>
         <span className="px-4 py-2 rounded-lg bg-[#252526] text-pink-300">APIs</span>
       </div>
+      
+      {/* CTA Button */}
+      <button 
+        onClick={handleExploreProjects}
+        className="mt-8 inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-teal-600 to-blue-600 text-white font-medium shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-75 cursor-pointer group"
+      >
+        <span>View My Projects</span>
+        <svg 
+          className="w-4 h-4 transition-transform duration-75 group-hover:translate-x-1" 
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+      </button>
     </div>
   );
 };

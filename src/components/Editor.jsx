@@ -2,13 +2,36 @@
 import { useState, useEffect } from "react";
 import { Home, About, Projects } from "../data/sections";
 
-export default function Editor({ activeFile }) {
+export default function Editor({ activeFile, onFileChange, openTabs, setOpenTabs }) {
   const [displayedLine1, setDisplayedLine1] = useState("");
   const [displayedLine2, setDisplayedLine2] = useState("");
   const [fadeIn, setFadeIn] = useState(false);
 
   const line1 = "Welcome to my portfolio,";
   const line2 = "A modern VS Code-inspired Portfolio";
+
+  // Navigation functions
+  const handleNavigateToAbout = () => {
+    const aboutFile = { type: "section", file: "About" };
+    if (onFileChange) {
+      onFileChange(aboutFile);
+    }
+    // Add to tabs if not already open
+    if (setOpenTabs && !openTabs.some(tab => tab.file === "About" && tab.type === "section")) {
+      setOpenTabs(prev => [...prev, aboutFile]);
+    }
+  };
+
+  const handleNavigateToProjects = () => {
+    const projectsFile = { type: "section", file: "Projects" };
+    if (onFileChange) {
+      onFileChange(projectsFile);
+    }
+    // Add to tabs if not already open
+    if (setOpenTabs && !openTabs.some(tab => tab.file === "Projects" && tab.type === "section")) {
+      setOpenTabs(prev => [...prev, projectsFile]);
+    }
+  };
 
   useEffect(() => {
     // Fade-in trigger
@@ -77,8 +100,8 @@ export default function Editor({ activeFile }) {
         ) : activeFile.type === "section" ? (
           // Render React components for each section
           <>
-            {activeFile.file === "Home" && <Home />}
-            {activeFile.file === "About" && <About />}
+            {activeFile.file === "Home" && <Home onNavigateToAbout={handleNavigateToAbout} />}
+            {activeFile.file === "About" && <About onNavigateToProjects={handleNavigateToProjects} />}
             {activeFile.file === "Projects" && <Projects />}
           </>
         ) : activeFile.type === "img" ? (
