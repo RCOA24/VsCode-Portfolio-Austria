@@ -11,7 +11,7 @@ export default function Intro({ onComplete }) {
   const [currentStage, setCurrentStage] = useState('combined'); // 'combined' | 'fadeout' | 'vscode' | 'complete'
   const [showVSCode, setShowVSCode] = useState(false);
 
-  const message = "Hello! Welcome to my World.";
+  const message = "Hello! I'm Rodney, a Full-Stack Developer.";
 
   // Combined React Bits + Typewriter stage
   useEffect(() => {
