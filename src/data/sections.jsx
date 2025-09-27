@@ -565,7 +565,7 @@ export const About = ({ onNavigateToProjects }) => {
           </h2>
           
           <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2 md:gap-3 max-w-xs xs:max-w-sm sm:max-w-2xl md:max-w-4xl lg:max-w-5xl mx-auto">
-            {["RESTful APIs", "Open Source APIs", "GSAP", "Agile Methodologies", "MVC Architecture", "Backend Integration", "UI/UX Design", "Responsive Design", "Database Design", "Version Control"].map(
+            {["RESTful APIs", "Open Source APIs", "GSAP", "Agile Methodologies", "MVC Architecture", "Backend Integration", "UI/UX Design", "Responsive Design",].map(
               (skill, i) => (
                 <span
                   key={i}
