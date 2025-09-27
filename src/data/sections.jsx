@@ -268,68 +268,298 @@ export const Home = ({ onNavigateToAbout }) => {
 };
 
 // ================== ABOUT ==================
+
+
+
+// Programming language icons mapping
+const techIcons = {
+  "HTML5": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg",
+  "CSS3": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg",
+  "Tailwind CSS": "https://img.icons8.com/?size=100&id=x7XMNGh2vdqA&format=png&color=000000",
+  "JavaScript": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg",
+  "Java": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg",
+  "C#": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg",
+  "React": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg",
+  "PHP": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg",
+  "Laravel": "https://laravel.com/img/logomark.min.svg",
+  "MySQL": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg",
+  "GIT": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg",
+  "Bootstrap": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bootstrap/bootstrap-original.svg"
+};
+
 export const About = ({ onNavigateToProjects }) => {
   const container = useRef(null);
-  
+  const techWrapper = useRef(null);
+  const backgroundRef = useRef(null);
+
   const handleExploreProjects = () => {
-    if (onNavigateToProjects) {
-      onNavigateToProjects();
-    }
+    if (onNavigateToProjects) onNavigateToProjects();
   };
 
   useEffect(() => {
-    if (container.current && container.current.children.length > 0) {
-      const children = Array.from(container.current.children);
-      const ctaButton = children.find(child => child.tagName === 'BUTTON');
-      const otherChildren = children.filter(child => child.tagName !== 'BUTTON');
+    if (!container.current) return;
+
+    // Create floating particles (reduced for mobile)
+    const createParticles = () => {
+      const particleContainer = backgroundRef.current;
+      if (!particleContainer) return;
+
+      const particleCount = window.innerWidth < 768 ? 10 : 15; // Fewer on mobile
       
-      // Animate other children with stagger
-      gsap.fromTo(
-        otherChildren,
-        { x: -50, opacity: 0 },
-        { x: 0, opacity: 1, stagger: 0.2, duration: 0.8, ease: "power2.out" }
-      );
-      
-      // Show CTA button immediately without animation
-      if (ctaButton) {
-        gsap.set(ctaButton, { opacity: 1, x: 0 });
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'floating-particle';
+        particle.style.cssText = `
+          position: absolute;
+          width: ${Math.random() * 3 + 1}px;
+          height: ${Math.random() * 3 + 1}px;
+          background: ${Math.random() > 0.5 ? '#06b6d4' : '#8b5cf6'};
+          border-radius: 50%;
+          left: ${Math.random() * 100}%;
+          top: ${Math.random() * 100}%;
+          opacity: ${Math.random() * 0.4 + 0.1};
+          animation: float${i % 3} ${Math.random() * 25 + 20}s infinite linear;
+        `;
+        particleContainer.appendChild(particle);
       }
+    };
+
+    // Fade-in animation
+    const elements = container.current.querySelectorAll(".fade-in");
+    elements.forEach((el, i) => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      el.style.transition = 'all 0.6s ease-out';
+      
+      setTimeout(() => {
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      }, i * 100);
+    });
+
+    // Auto-scrolling tech icons
+    if (techWrapper.current) {
+      const totalWidth = techWrapper.current.scrollWidth / 2;
+      let currentX = 0;
+      
+      const animate = () => {
+        currentX -= 0.3; // Slower scroll speed
+        if (Math.abs(currentX) >= totalWidth) {
+          currentX = 0;
+        }
+        techWrapper.current.style.transform = `translateX(${currentX}px)`;
+        requestAnimationFrame(animate);
+      };
+      
+      animate();
     }
+
+    createParticles();
+
+    // Cleanup
+    return () => {
+      if (backgroundRef.current) {
+        backgroundRef.current.innerHTML = '';
+      }
+    };
   }, []);
 
+  // Duplicate icons for seamless looping
+  const techArray = [...Object.entries(techIcons), ...Object.entries(techIcons)];
+
   return (
-    <div ref={container} className="max-w-3xl mx-auto text-center space-y-6 p-6">
-      <h1 className="text-3xl md:text-4xl font-bold text-blue-400">About Me</h1>
-      <p className="text-gray-300 leading-relaxed text-lg">
-        I'm <span className="font-semibold text-teal-400">Rodney Austria</span>, a{" "}
-        <span className="text-purple-400">Full-Stack Developer</span> passionate about building
-        responsive, modern web apps with clean UI/UX and seamless integrations.
-      </p>
-      <div className="flex flex-wrap justify-center gap-4">
-        <span className="px-4 py-2 rounded-lg bg-[#252526] text-blue-300">React</span>
-        <span className="px-4 py-2 rounded-lg bg-[#252526] text-teal-300">Laravel</span>
-        <span className="px-4 py-2 rounded-lg bg-[#252526] text-purple-300">Tailwind CSS</span>
-        <span className="px-4 py-2 rounded-lg bg-[#252526] text-pink-300">APIs</span>
-      </div>
-      
-      {/* CTA Button */}
-      <button 
-        onClick={handleExploreProjects}
-        className="mt-8 inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-teal-600 to-blue-600 text-white font-medium shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-75 cursor-pointer group"
+    <div className="relative min-h-screen overflow-hidden">
+      {/* Animated Background */}
+      <div 
+        ref={backgroundRef}
+        className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"
       >
-        <span>View My Projects</span>
-        <svg 
-          className="w-4 h-4 transition-transform duration-75 group-hover:translate-x-1" 
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-        </svg>
-      </button>
+        {/* Gradient Orbs - Smaller and responsive */}
+        <div className="absolute top-1/4 left-1/4 w-32 h-32 sm:w-48 sm:h-48 md:w-64 md:h-64 bg-gradient-to-r from-blue-500/15 to-purple-500/15 rounded-full filter blur-2xl sm:blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-40 h-40 sm:w-60 sm:h-60 md:w-80 md:h-80 bg-gradient-to-r from-teal-500/10 to-cyan-500/10 rounded-full filter blur-2xl sm:blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 sm:w-72 sm:h-72 md:w-96 md:h-96 bg-gradient-to-r from-pink-500/8 to-purple-500/8 rounded-full filter blur-2xl sm:blur-3xl animate-pulse" style={{animationDelay: '4s'}}></div>
+        
+        {/* Grid Pattern */}
+        <div className="absolute inset-0 opacity-5 sm:opacity-8 md:opacity-10">
+          <div className="grid-pattern"></div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div ref={container} className="relative z-10 max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 space-y-4 sm:space-y-6 md:space-y-8 text-center">
+        {/* Heading */}
+        <h1 className="fade-in text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-blue-400 pt-6 sm:pt-8 md:pt-12">
+          About Me
+        </h1>
+
+        {/* Description */}
+        <p className="fade-in text-gray-300 leading-relaxed text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl max-w-xs xs:max-w-sm sm:max-w-2xl md:max-w-3xl lg:max-w-4xl mx-auto backdrop-blur-sm bg-gray-800/15 p-3 sm:p-4 md:p-6 rounded-lg sm:rounded-xl border border-gray-700/40">
+          Hi, I'm <span className="font-semibold text-teal-400">Rodney Austria</span>, a{" "}
+          <span className="text-purple-400">Full-Stack Developer</span> with a passion for crafting{" "}
+          <span className="text-pink-400">modern, responsive</span> web apps. I enjoy turning ideas into{" "}
+          <span className="text-blue-300">interactive experiences</span> that blend clean UI, seamless UX, and solid code architecture.
+        </p>
+
+        {/* Tech Stack Section */}
+        <div className="fade-in space-y-2 sm:space-y-3 md:space-y-4">
+          <h2 className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-gray-200">
+            Technologies & Tools
+          </h2>
+          
+          {/* Tech Stack Auto Scroll */}
+          <div className="overflow-hidden relative py-2 sm:py-3 md:py-4 lg:py-6 backdrop-blur-sm bg-gray-800/8 rounded-lg sm:rounded-xl border border-gray-700/25">
+            <div
+              ref={techWrapper}
+              className="flex items-center gap-2 sm:gap-3 md:gap-4 lg:gap-6 justify-start"
+              style={{ width: "max-content" }}
+            >
+              {techArray.map(([tech, iconUrl], i) => (
+                <div
+                  key={i}
+                  className="flex flex-col items-center p-2 sm:p-3 md:p-4 bg-gray-800/30 backdrop-blur-sm rounded-md sm:rounded-lg border border-gray-600/40 hover:border-cyan-400 hover:bg-gray-700/50 transition-all duration-300 hover:scale-105 min-w-[60px] xs:min-w-[70px] sm:min-w-[80px] md:min-w-[90px] group"
+                >
+                  <img
+                    src={iconUrl}
+                    alt={tech}
+                    className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 mb-1 sm:mb-2 object-contain group-hover:scale-110 transition-transform duration-300"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'flex';
+                    }}
+                  />
+                  <div className="hidden w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-cyan-500 to-blue-500 rounded items-center justify-center text-white text-xs font-bold mb-1 sm:mb-2">
+                    {tech.charAt(0)}
+                  </div>
+                  <span className="text-xs sm:text-sm md:text-sm lg:text-base text-cyan-200 font-medium text-center px-1">{tech}</span>
+                </div>
+              ))}
+            </div>
+            
+            {/* Gradient edges */}
+            <div className="absolute left-0 top-0 w-4 sm:w-6 md:w-8 lg:w-12 h-full bg-gradient-to-r from-gray-800 to-transparent pointer-events-none"></div>
+            <div className="absolute right-0 top-0 w-4 sm:w-6 md:w-8 lg:w-12 h-full bg-gradient-to-l from-gray-800 to-transparent pointer-events-none"></div>
+          </div>
+        </div>
+
+        
+
+        {/* Buttons */}
+        <div className="fade-in flex flex-col xs:flex-row justify-center gap-2 sm:gap-3 md:gap-4 mt-4 sm:mt-6 md:mt-8 pb-6 sm:pb-8 md:pb-12">
+          <button
+            onClick={handleExploreProjects}
+            className="group px-4 xs:px-5 sm:px-6 md:px-8 py-2 xs:py-2.5 sm:py-3 md:py-3.5 rounded-lg bg-gradient-to-r from-teal-600 to-blue-600 text-white text-xs xs:text-sm sm:text-base font-medium shadow-lg sm:shadow-xl md:shadow-2xl hover:shadow-teal-500/20 hover:scale-105 transition-all duration-300 backdrop-blur-sm border border-teal-500/15"
+          >
+            <span className="flex items-center justify-center gap-1.5 sm:gap-2">
+              View My Projects
+              <svg className="w-3 h-3 xs:w-3.5 xs:h-3.5 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5-5 5M6 12h12" />
+              </svg>
+            </span>
+          </button>
+          <a
+            href="/RODNEY_AUSTRIA_curriculum_vitae 2025.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group px-4 xs:px-5 sm:px-6 md:px-8 py-2 xs:py-2.5 sm:py-3 md:py-3.5 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs xs:text-sm sm:text-base font-medium shadow-lg sm:shadow-xl md:shadow-2xl hover:shadow-purple-500/20 hover:scale-105 transition-all duration-300 backdrop-blur-sm border border-purple-500/15"
+          >
+            <span className="flex items-center justify-center gap-1.5 sm:gap-2">
+              View Resume
+              <svg className="w-3 h-3 xs:w-3.5 xs:h-3.5 sm:w-4 sm:h-4 group-hover:translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </span>
+          </a>
+        </div>
+      </div>
+
+      {/* CSS Animations */}
+      <style jsx>{`
+        .grid-pattern {
+          background-image: 
+            linear-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(6, 182, 212, 0.1) 1px, transparent 1px);
+          background-size: 30px 30px;
+          width: 100%;
+          height: 100%;
+          animation: gridMove 25s linear infinite;
+        }
+
+        @media (min-width: 640px) {
+          .grid-pattern {
+            background-size: 40px 40px;
+            animation: gridMove 22s linear infinite;
+          }
+        }
+
+        @media (min-width: 768px) {
+          .grid-pattern {
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+          }
+        }
+
+        @keyframes gridMove {
+          0% { transform: translate(0, 0); }
+          100% { transform: translate(50px, 50px); }
+        }
+
+        @keyframes float0 {
+          0%, 100% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+          25% { transform: translateY(-15px) translateX(8px) rotate(90deg); }
+          50% { transform: translateY(0px) translateX(15px) rotate(180deg); }
+          75% { transform: translateY(15px) translateX(8px) rotate(270deg); }
+        }
+
+        @keyframes float1 {
+          0%, 100% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+          33% { transform: translateY(-20px) translateX(-10px) rotate(120deg); }
+          66% { transform: translateY(10px) translateX(-20px) rotate(240deg); }
+        }
+
+        @keyframes float2 {
+          0%, 100% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+          50% { transform: translateY(-25px) translateX(25px) rotate(180deg); }
+        }
+
+        .floating-particle {
+          will-change: transform;
+        }
+
+        @media (max-width: 640px) {
+          .floating-particle {
+            animation-duration: 30s !important;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .floating-particle,
+          .grid-pattern {
+            animation: none !important;
+          }
+        }
+
+        /* Custom breakpoint for extra small screens */
+        @media (min-width: 475px) {
+          .xs\\:text-2xl { font-size: 1.5rem; }
+          .xs\\:text-sm { font-size: 0.875rem; }
+          .xs\\:text-base { font-size: 1rem; }
+          .xs\\:max-w-sm { max-width: 24rem; }
+          .xs\\:flex-row { flex-direction: row; }
+          .xs\\:w-7 { width: 1.75rem; }
+          .xs\\:h-7 { height: 1.75rem; }
+          .xs\\:min-w-\\[70px\\] { min-width: 70px; }
+          .xs\\:px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+          .xs\\:px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
+          .xs\\:py-2\\.5 { padding-top: 0.625rem; padding-bottom: 0.625rem; }
+          .xs\\:w-3\\.5 { width: 0.875rem; }
+          .xs\\:h-3\\.5 { height: 0.875rem; }
+        }
+      `}</style>
     </div>
   );
 };
+
+
 
 // ================== PROJECTS ==================
 export const Projects = () => {
