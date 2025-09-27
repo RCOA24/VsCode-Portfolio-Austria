@@ -793,7 +793,7 @@ export const About = ({ onNavigateToProjects }) => {
 };
 
 // ================== PROJECTS ==================
-const Projects = () => {
+export const Projects = () => {
   const container = useRef(null);
   const backgroundRef = useRef(null);
 

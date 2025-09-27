@@ -145,9 +145,8 @@ export default function Intro({ onComplete }) {
       ref={containerRef}
       className="fixed inset-0 flex items-center justify-center z-50 overflow-hidden"
       style={{
-        height: '100vh',
-        height: 'calc(var(--vh, 1vh) * 100)'
-      }}
+          height: 'calc(var(--vh, 1vh) * 100)'
+        }}
     >
       {/* Stage 1: Combined React Bits + Typewriter */}
       {(currentStage === 'combined' || currentStage === 'fadeout') && (
