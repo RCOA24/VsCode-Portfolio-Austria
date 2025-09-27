@@ -694,18 +694,57 @@ export const About = ({ onNavigateToProjects }) => {
   );
 };
 
-
-
 // ================== PROJECTS ==================
-export const Projects = () => {
+const Projects = () => {
   const container = useRef(null);
+  const backgroundRef = useRef(null);
 
+  // Initialize floating particles from About component
   useEffect(() => {
-    gsap.fromTo(
-      container.current.children,
-      { scale: 0.8, opacity: 0 },
-      { scale: 1, opacity: 1, stagger: 0.2, duration: 0.8, ease: "back.out(1.7)" }
-    );
+    if (!backgroundRef.current) return;
+
+    const createParticles = () => {
+      const particleContainer = backgroundRef.current;
+      const particleCount = window.innerWidth < 768 ? 10 : 15; // Fewer on mobile
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'floating-particle';
+        particle.style.cssText = `
+          position: absolute;
+          width: ${Math.random() * 3 + 1}px;
+          height: ${Math.random() * 3 + 1}px;
+          background: ${Math.random() > 0.5 ? '#06b6d4' : '#8b5cf6'};
+          border-radius: 50%;
+          left: ${Math.random() * 100}%;
+          top: ${Math.random() * 100}%;
+          opacity: ${Math.random() * 0.4 + 0.1};
+          animation: float${i % 3} ${Math.random() * 25 + 20}s infinite linear;
+        `;
+        particleContainer.appendChild(particle);
+      }
+    };
+
+    createParticles();
+
+    // Cleanup
+    return () => {
+      if (backgroundRef.current) {
+        const particles = backgroundRef.current.querySelectorAll('.floating-particle');
+        particles.forEach(particle => particle.remove());
+      }
+    };
+  }, []);
+
+  // GSAP animation for project cards
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.gsap) {
+      window.gsap.fromTo(
+        container.current.children,
+        { scale: 0.8, opacity: 0 },
+        { scale: 1, opacity: 1, stagger: 0.2, duration: 0.8, ease: "back.out(1.7)" }
+      );
+    }
   }, []);
 
   const projects = [
@@ -715,31 +754,170 @@ export const Projects = () => {
       img: "https://via.placeholder.com/250x150.png?text=TyphoGuard",
       tech: ["Laravel", "Leaflet.js", "Tailwind CSS"],
     },
-    
+    {
+      title: "CodeCraft Studio ⚡",
+      desc: "Full-stack development platform with AI integration.",
+      img: "https://via.placeholder.com/250x150.png?text=CodeCraft",
+      tech: ["React", "Node.js", "MongoDB", "OpenAI"],
+    },
+    {
+      title: "DataViz Pro 📊",
+      desc: "Interactive data visualization and analytics dashboard.",
+      img: "https://via.placeholder.com/250x150.png?text=DataViz",
+      tech: ["Vue.js", "D3.js", "Python", "FastAPI"],
+    },
   ];
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl md:text-4xl font-bold text-center text-purple-400 mb-8">Projects</h1>
-      <div ref={container} className="flex flex-wrap gap-6 justify-center">
-        {projects.map((p, i) => (
-          <div
-            key={i}
-            className="bg-[#252526] rounded-xl p-4 w-72 hover:scale-105 hover:shadow-xl transition transform"
-          >
-            <img src={p.img} alt={p.title} className="rounded-lg mb-3" />
-            <h3 className="text-xl font-semibold text-blue-400">{p.title}</h3>
-            <p className="text-gray-400 text-sm mb-3">{p.desc}</p>
-            <div className="flex flex-wrap gap-2">
-              {p.tech.map((t, i) => (
-                <span key={i} className="px-2 py-1 text-xs rounded-md bg-[#1e1e1e] text-gray-300">
-                  {t}
-                </span>
-              ))}
-            </div>
-          </div>
-        ))}
+    <div className="relative w-full h-full overflow-hidden">
+      {/* Animated Background - Same as About component */}
+      <div 
+        ref={backgroundRef}
+        className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"
+      >
+        {/* Gradient Orbs - Same style as About */}
+        <div className="absolute top-1/4 left-1/4 w-32 h-32 sm:w-48 sm:h-48 md:w-64 md:h-64 bg-gradient-to-r from-blue-500/15 to-purple-500/15 rounded-full filter blur-2xl sm:blur-3xl animate-pulse">      </div>
+        <div className="absolute bottom-1/4 right-1/4 w-40 h-40 sm:w-60 sm:h-60 md:w-80 md:h-80 bg-gradient-to-r from-teal-500/10 to-cyan-500/10 rounded-full filter blur-2xl sm:blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 sm:w-72 sm:h-72 md:w-96 md:h-96 bg-gradient-to-r from-pink-500/8 to-purple-500/8 rounded-full filter blur-2xl sm:blur-3xl animate-pulse" style={{animationDelay: '4s'}}></div>
+        
+        {/* Grid Pattern - Same as About */}
+        <div className="absolute inset-0 opacity-5 sm:opacity-8 md:opacity-10">
+          <div className="grid-pattern"></div>
+        </div>
       </div>
+
+      {/* Content */}
+      <div className="relative z-10 p-4 sm:p-6 h-full overflow-y-auto">
+        {/* Header with glass effect */}
+        <div className="text-center mb-8">
+          <h1 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent mb-3">
+            Projects
+          </h1>
+          <div className="w-16 h-0.5 bg-gradient-to-r from-purple-400 to-blue-400 mx-auto rounded-full"></div>
+        </div>
+
+        {/* Project Cards */}
+        <div ref={container} className="flex flex-wrap gap-6 justify-center max-w-full">
+          {projects.map((project, i) => (
+            <div
+              key={i}
+              className="group relative bg-white/5 backdrop-blur-md rounded-xl p-4 w-72 border border-white/10 hover:border-white/20 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/25 transition-all duration-300 transform"
+            >
+              {/* Card glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl"></div>
+              
+              <div className="relative z-10">
+                <div className="relative overflow-hidden rounded-lg mb-3">
+                  <img 
+                    src={project.img} 
+                    alt={project.title} 
+                    className="w-full h-40 object-cover transition-transform duration-300 group-hover:scale-110" 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
+
+                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-purple-300 transition-colors duration-300">
+                  {project.title}
+                </h3>
+                
+                <p className="text-gray-300 text-sm mb-3 leading-relaxed">
+                  {project.desc}
+                </p>
+                
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {project.tech.map((tech, techIndex) => (
+                    <span 
+                      key={techIndex} 
+                      className="px-2 py-1 text-xs rounded-full bg-gradient-to-r from-purple-500/20 to-blue-500/20 text-purple-200 border border-purple-500/30 hover:border-purple-400/50 transition-colors duration-300"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Action buttons */}
+                <div className="flex gap-2">
+                  <button className="flex-1 px-3 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-md hover:from-purple-600 hover:to-blue-600 transition-all duration-300 transform hover:scale-105 font-medium text-sm">
+                    View Live
+                  </button>
+                  <button className="flex-1 px-3 py-2 border border-purple-500/50 text-purple-300 rounded-md hover:bg-purple-500/10 hover:border-purple-400 transition-all duration-300 font-medium text-sm">
+                    Source Code
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+     
+
+      {/* CSS Animations - Same as About component */}
+      <style jsx>{`
+        .grid-pattern {
+          background-image: 
+            linear-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(6, 182, 212, 0.1) 1px, transparent 1px);
+          background-size: 30px 30px;
+          width: 100%;
+          height: 100%;
+          animation: gridMove 25s linear infinite;
+        }
+
+        @media (min-width: 640px) {
+          .grid-pattern {
+            background-size: 40px 40px;
+            animation: gridMove 22s linear infinite;
+          }
+        }
+
+        @media (min-width: 768px) {
+          .grid-pattern {
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+          }
+        }
+
+        @keyframes gridMove {
+          0% { transform: translate(0, 0); }
+          100% { transform: translate(50px, 50px); }
+        }
+
+        @keyframes float0 {
+          0%, 100% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+          25% { transform: translateY(-15px) translateX(8px) rotate(90deg); }
+          50% { transform: translateY(0px) translateX(15px) rotate(180deg); }
+          75% { transform: translateY(15px) translateX(8px) rotate(270deg); }
+        }
+
+        @keyframes float1 {
+          0%, 100% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+          33% { transform: translateY(-20px) translateX(-10px) rotate(120deg); }
+          66% { transform: translateY(10px) translateX(-20px) rotate(240deg); }
+        }
+
+        @keyframes float2 {
+          0%, 100% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+          50% { transform: translateY(-25px) translateX(25px) rotate(180deg); }
+        }
+
+        .floating-particle {
+          will-change: transform;
+        }
+
+        @media (max-width: 640px) {
+          .floating-particle {
+            animation-duration: 30s !important;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .floating-particle,
+          .grid-pattern {
+            animation: none !important;
+          }
+        }
+      `}</style>
     </div>
   );
 };
